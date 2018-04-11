@@ -21,7 +21,16 @@ var reducer = (state = stateDefault, action)=>{
   }
 };
 
-var store = redux.createStore(reducer);
+var store = redux.createStore(reducer, redux.compose(
+  window.devToolsExtension ? window.devToolsExtension() : f => f
+));
+
+var unsubscribe = store.subscribe(()=>{
+  var state = store.getState();
+  console.log('Search text is ', state.searchText);
+  document.getElementById('app').innerHTML = state.searchText;
+  console.log(document.getElementById('app'));
+});
 
 var currentState = store.getState();
 
@@ -34,4 +43,18 @@ var action = {
 
 store.dispatch(action);
 
-console.log('State after action: ', store.getState());
+var action = {
+  type: 'CHANGE_SEARCH_TEXT',
+  searchText: 'Cat'
+}
+
+store.dispatch(action);
+
+unsubscribe();
+
+var action = {
+  type: 'CHANGE_SEARCH_TEXT',
+  searchText: 'Rabbit'
+}
+
+store.dispatch(action);
